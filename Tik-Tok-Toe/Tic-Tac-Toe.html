@@ -4,370 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>X and O Game (Tic-Tac-Toe)</title>
-    <!-- Load Tailwind CSS via CDN for modern styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for the board grid and cell centering */
-        .game-grid {
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
+        body {
+            background: #eee;
+            font-family: Arial, sans-serif;
         }
-        /* Custom hover effect for empty cells (Updated for Dark Theme) */
-        .cell:not(.played):hover {
+        .container {
+            width: 350px;
+            margin: 40px auto;
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(3, 60px);
+            gap: 5px;
+            margin: 20px auto;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            background: #fafafa;
+            border: 1px solid #333;
+            font-size: 2em;
+            text-align: center;
+            vertical-align: middle;
             cursor: pointer;
-            background-color: #374151; /* Gray-700 for dark mode hover */
-            transition: background-color 0.2s;
         }
-        /* Style for X and O to look clean */
-        .cell-text {
-            font-size: 4rem; /* Large text */
-            line-height: 1;
-            font-weight: 700;
+        #statusDisplay {
+            text-align: center;
+            margin-bottom: 10px;
+            min-height: 24px;
         }
-        /* Responsive sizing for the main container */
-        .game-container {
+        #scoreX, #scoreO {
+            font-weight: bold;
+        }
+        #restartButton {
             width: 100%;
-            max-width: 400px;
+            padding: 10px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
         }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-gray-900 flex items-center justify-center min-h-screen p-4 font-sans">
 
-        <!-- Main Game Container (Updated background to bg-gray-800) -->
-        <div class="game-container bg-gray-800 p-8 rounded-xl shadow-2xl transition-all duration-300">
-            <h1 class="text-4xl font-extrabold text-white text-center mb-6">X & O Challenge</h1>
-
-            <!-- Difficulty Selector -->
-            <div class="mb-6 flex justify-center">
-                <label for="difficulty" class="text-white font-semibold mr-2">Difficulty:</label>
-                <select id="difficulty" class="bg-gray-700 text-white rounded px-2 py-1">
-                    <option value="easy">Easy</option>
-                    <option value="hard" selected>Hard</option>
-                    <option value="impossible">Almost Impossible</option>
-                </select>
-            </div>
-
-            <!-- Status Display (Initial color updated to text-indigo-400) -->
-            <div id="statusDisplay" class="text-xl font-semibold text-center mb-6 h-8 text-indigo-400">
-                <!-- Initial status will be set by JavaScript -->
-            </div>
-
-        <!-- Score Counter Display (NEW) -->
-        <div class="flex justify-between text-lg font-bold mb-4 px-2">
-            <div class="text-red-400">
-                X Wins: <span id="scoreX" class="ml-1 text-2xl">0</span>
-            </div>
-            <div class="text-blue-400">
-                O Wins: <span id="scoreO" class="ml-1 text-2xl">0</span>
-            </div>
+<body>
+    <div class="container">
+        <h1>Tic-Tac-Toe</h1>
+        <div style="margin-bottom:10px;text-align:center;">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="hard" selected>Hard</option>
+                <option value="impossible">Almost Impossible</option>
+            </select>
         </div>
-
-        <!-- Tic-Tac-Toe Grid -->
-        <div class="game-grid grid border-4 border-indigo-500 rounded-lg aspect-square">
-            <!-- Cells are dynamically created or added here -->
-            <div data-cell-index="0" class="cell flex items-center justify-center border-r-4 border-b-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="1" class="cell flex items-center justify-center border-r-4 border-b-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="2" class="cell flex items-center justify-center border-b-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="3" class="cell flex items-center justify-center border-r-4 border-b-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="4" class="cell flex items-center justify-center border-r-4 border-b-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="5" class="cell flex items-center justify-center border-b-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="6" class="cell flex items-center justify-center border-r-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="7" class="cell flex items-center justify-center border-r-4 border-indigo-500 w-full h-full aspect-square"></div>
-            <div data-cell-index="8" class="cell flex items-center justify-center w-full h-full aspect-square"></div>
+        <div id="statusDisplay">Welcome!</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+            <div>X Wins: <span id="scoreX">0</span></div>
+            <div>O Wins: <span id="scoreO">0</span></div>
         </div>
-
-        <!-- Restart Button -->
-        <button id="restartButton" class="w-full mt-8 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-green-300">
-            Restart Game
-        </button>
+        <div class="board">
+            <div class="cell" data-cell-index="0"></div>
+            <div class="cell" data-cell-index="1"></div>
+            <div class="cell" data-cell-index="2"></div>
+            <div class="cell" data-cell-index="3"></div>
+            <div class="cell" data-cell-index="4"></div>
+            <div class="cell" data-cell-index="5"></div>
+            <div class="cell" data-cell-index="6"></div>
+            <div class="cell" data-cell-index="7"></div>
+            <div class="cell" data-cell-index="8"></div>
+        </div>
+        <button id="restartButton">Restart Game</button>
     </div>
 
     <script>
-        // --- Game Logic ---
-        
-        // Game state variables
-        const statusDisplay = document.querySelector('#statusDisplay');
-        // NEW: Select score display elements
-        const scoreDisplayX = document.querySelector('#scoreX');
-        const scoreDisplayO = document.querySelector('#scoreO');
+    // BEGINNER JAVASCRIPT
+    var statusDisplay = document.getElementById('statusDisplay');
+    var scoreDisplayX = document.getElementById('scoreX');
+    var scoreDisplayO = document.getElementById('scoreO');
+    var cells = document.getElementsByClassName('cell');
+    var gameActive = true;
+    var currentPlayer = 'X';
+    var gameState = ['', '', '', '', '', '', '', '', ''];
+    var scoreX = 0;
+    var scoreO = 0;
+    var winningConditions = [
+        [0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]
+    ];
 
-        let gameActive = true;
-        let currentPlayer = "X";
-        // Initialize the board as an array of empty strings
-        let gameState = ["", "", "", "", "", "", "", "", ""];
+    function updateScoreDisplay() {
+        scoreDisplayX.innerText = scoreX;
+        scoreDisplayO.innerText = scoreO;
+    }
 
-        // NEW: Score tracking variables
-        let scoreX = 0;
-        let scoreO = 0;
+    function setStatus(msg) {
+        statusDisplay.innerText = msg;
+    }
 
-        // Define the possible winning conditions (indexes of the board array)
-        const winningConditions = [
-            [0, 1, 2], // Row 1
-            [3, 4, 5], // Row 2
-            [6, 7, 8], // Row 3
-            [0, 3, 6], // Column 1
-            [1, 4, 7], // Column 2
-            [2, 5, 8], // Column 3
-            [0, 4, 8], // Diagonal 1
-            [2, 4, 6]  // Diagonal 2
-        ];
-
-        // Messages to display
-        const winningMessage = () => `Player ${currentPlayer} has won! 🎉`;
-        const drawMessage = () => `Game ended in a draw! 🤷‍♂️`;
-        const currentPlayerTurn = () => `It's ${currentPlayer}'s turn`;
-
-        /**
-         * Updates the score display in the UI. (NEW FUNCTION)
-         */
-        function updateScoreDisplay() {
-            scoreDisplayX.textContent = scoreX;
-            scoreDisplayO.textContent = scoreO;
-        }
-
-        /**
-         * Updates the status message in the UI.
-         * @param {string} message - The message to display.
-         * @param {string} colorClass - Tailwind color class for styling.
-         */
-        function setStatus(message, colorClass = 'text-indigo-400') { // Default color updated for dark mode
-            statusDisplay.innerHTML = message;
-            statusDisplay.className = `text-xl font-semibold text-center mb-6 h-8 ${colorClass}`;
-        }
-        
-        /**
-         * Checks if the game has ended in a win or a draw.
-         */
-        function handleResultValidation() {
-            let roundWon = false;
-            
-            // Check all winning conditions
-            for (let i = 0; i < winningConditions.length; i++) {
-                const winCondition = winningConditions[i];
-                // Get the current values of the three cells in the condition
-                let a = gameState[winCondition[0]];
-                let b = gameState[winCondition[1]];
-                let c = gameState[winCondition[2]];
-
-                // If any cell is empty, continue to the next condition
-                if (a === '' || b === '' || c === '') {
-                    continue;
-                }
-                
-                // If all three match, a player has won
-                if (a === b && a === c) {
-                    roundWon = true;
-                    // Highlight the winning cells
-                    winCondition.forEach(index => {
-                        const cell = document.querySelector(`[data-cell-index="${index}"]`);
-                        cell.classList.add('bg-yellow-200', 'transition-all', 'duration-500');
-                    });
-                    break;
-                }
+    function checkWinner(state) {
+        for (var i=0;i<winningConditions.length;i++) {
+            var a = winningConditions[i][0];
+            var b = winningConditions[i][1];
+            var c = winningConditions[i][2];
+            if (state[a] && state[a] === state[b] && state[a] === state[c]) {
+                return state[a];
             }
+        }
+        return null;
+    }
 
-            if (roundWon) {
-                // Winning colors updated for better contrast
-                setStatus(winningMessage(), currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400');
+    function handleCellClick(e) {
+        var idx = parseInt(e.target.getAttribute('data-cell-index'));
+        if (gameState[idx] !== '' || !gameActive) return;
+        gameState[idx] = currentPlayer;
+        e.target.innerText = currentPlayer;
+        var winner = checkWinner(gameState);
+        if (winner) {
+            setStatus('Player ' + winner + ' wins!');
+            gameActive = false;
+            if (winner === 'X') scoreX++;
+            else scoreO++;
+            updateScoreDisplay();
+            return;
+        }
+        if (gameState.indexOf('') === -1) {
+            setStatus('Draw!');
+            gameActive = false;
+            return;
+        }
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        setStatus("It's " + currentPlayer + "'s turn");
+        if (currentPlayer === 'O' && gameActive) {
+            setTimeout(aiMove, 400);
+        }
+    }
+
+    function aiMove() {
+        var difficulty = document.getElementById('difficulty').value;
+        var move;
+        var emptyCells = [];
+        for (var i=0;i<gameState.length;i++) {
+            if (gameState[i] === '') emptyCells.push(i);
+        }
+        if (difficulty === 'easy') {
+            move = emptyCells[Math.floor(Math.random()*emptyCells.length)];
+        } else if (difficulty === 'hard') {
+            if (Math.random()<0.5) {
+                move = emptyCells[Math.floor(Math.random()*emptyCells.length)];
+            } else {
+                move = getBestMove();
+            }
+        } else {
+            move = getBestMove();
+        }
+        if (move !== undefined && gameState[move] === '') {
+            gameState[move] = 'O';
+            cells[move].innerText = 'O';
+            var winner = checkWinner(gameState);
+            if (winner) {
+                setStatus('Player ' + winner + ' wins!');
                 gameActive = false;
-                
-                // NEW: Increment the winning player's score
-                if (currentPlayer === 'X') {
-                    scoreX++;
-                } else {
-                    scoreO++;
-                }
-                updateScoreDisplay(); // Update the UI score counter
-                
+                if (winner === 'X') scoreX++;
+                else scoreO++;
+                updateScoreDisplay();
                 return;
             }
-
-            // Check for a draw (if there are no empty cells left)
-            let roundDraw = !gameState.includes("");
-            if (roundDraw) {
-                setStatus(drawMessage(), 'text-gray-400'); // Draw color updated for dark mode
+            if (gameState.indexOf('') === -1) {
+                setStatus('Draw!');
                 gameActive = false;
                 return;
             }
-
-            // If no win or draw, switch players
-            handlePlayerChange();
+            currentPlayer = 'X';
+            setStatus("It's X's turn");
         }
+    }
 
-        /**
-         * Updates the board state and the visual representation of the cell.
-         * @param {HTMLElement} clickedCell - The div element that was clicked.
-         * @param {number} clickedCellIndex - The index (0-8) of the cell.
-         */
-        function handleCellPlayed(clickedCell, clickedCellIndex) {
-            // Update the internal game state
-            gameState[clickedCellIndex] = currentPlayer;
-            
-            // Update the cell visually
-            // Player colors updated for better contrast
-            const playerColor = currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400';
-            clickedCell.innerHTML = `<span class="cell-text ${playerColor}">${currentPlayer}</span>`;
-            clickedCell.classList.add('played'); // Mark as played to prevent future clicks/hover effect
-        }
-
-        /**
-         * Switches the current player and updates the status message.
-         */
-        function handlePlayerChange() {
-            currentPlayer = currentPlayer === "X" ? "O" : "X";
-            setStatus(currentPlayerTurn());
-        }
-
-        /**
-         * Main function for handling a cell click.
-         * @param {Event} clickedCellEvent - The click event.
-         */
-        function handleCellClick(clickedCellEvent) {
-            const clickedCell = clickedCellEvent.target;
-            // Get the cell index from the data attribute
-            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
-
-            // Check if the cell is already occupied or if the game is over
-            if (gameState[clickedCellIndex] !== "" || !gameActive) {
-                return;
-            }
-
-            handleCellPlayed(clickedCell, clickedCellIndex);
-            handleResultValidation();
-
-            // If it's now O's turn and game is active, let AI play
-            if (currentPlayer === "O" && gameActive) {
-                setTimeout(aiMove, 400); // Small delay for realism
-            }
-        }
-
-        /**
-         * Minimax algorithm for Tic-Tac-Toe AI
-         * Returns the best move index for 'O'
-         */
-        function minimax(state, depth, isMaximizing) {
-            // Check for terminal states
-            const winner = checkWinner(state);
-            if (winner === "O") return { score: 10 - depth };
-            if (winner === "X") return { score: depth - 10 };
-            if (!state.includes("")) return { score: 0 };
-
-            let bestMove = -1;
-            if (isMaximizing) {
-                let bestScore = -Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (state[i] === "") {
-                        state[i] = "O";
-                        let score = minimax(state, depth + 1, false).score;
-                        state[i] = "";
-                        if (score > bestScore) {
-                            bestScore = score;
-                            bestMove = i;
-                        }
-                    }
-                }
-                return { score: bestScore, move: bestMove };
-            } else {
-                let bestScore = Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (state[i] === "") {
-                        state[i] = "X";
-                        let score = minimax(state, depth + 1, true).score;
-                        state[i] = "";
-                        if (score < bestScore) {
-                            bestScore = score;
-                            bestMove = i;
-                        }
-                    }
-                }
-                return { score: bestScore, move: bestMove };
-            }
-        }
-
-        /**
-         * Checks for a winner in the given state
-         */
-        function checkWinner(state) {
-            for (let i = 0; i < winningConditions.length; i++) {
-                const [a, b, c] = winningConditions[i];
-                if (state[a] && state[a] === state[b] && state[a] === state[c]) {
-                    return state[a];
+    function getBestMove() {
+        // BEGINNER MINIMAX (inefficient, verbose)
+        var bestScore = -Infinity;
+        var move;
+        for (var i=0;i<gameState.length;i++) {
+            if (gameState[i] === '') {
+                gameState[i] = 'O';
+                var score = minimax(gameState, 0, false);
+                gameState[i] = '';
+                if (score > bestScore) {
+                    bestScore = score;
+                    move = i;
                 }
             }
-            return null;
         }
+        return move;
+    }
 
-        /**
-         * AI makes its move as 'O' using minimax or random based on difficulty
-         */
-        function aiMove() {
-            if (!gameActive || currentPlayer !== "O") return;
-            let move;
-            const difficulty = document.getElementById('difficulty').value;
-            let randomChance = 0.4; // Default: Hard
-            if (difficulty === 'easy') randomChance = 0.9;
-            if (difficulty === 'impossible') randomChance = 0.0;
-
-            if (Math.random() < randomChance) {
-                // Pick a random empty cell
-                const emptyCells = gameState.map((v, i) => v === "" ? i : null).filter(i => i !== null);
-                move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-            } else {
-                move = minimax([...gameState], 0, true).move;
+    function minimax(state, depth, isMax) {
+        var winner = checkWinner(state);
+        if (winner === 'O') return 10-depth;
+        if (winner === 'X') return depth-10;
+        if (state.indexOf('') === -1) return 0;
+        if (isMax) {
+            var best = -Infinity;
+            for (var i=0;i<state.length;i++) {
+                if (state[i] === '') {
+                    state[i] = 'O';
+                    var val = minimax(state, depth+1, false);
+                    state[i] = '';
+                    if (val > best) best = val;
+                }
             }
-            if (move !== undefined && gameState[move] === "") {
-                const cell = document.querySelector(`[data-cell-index="${move}"]`);
-                handleCellPlayed(cell, move);
-                handleResultValidation();
+            return best;
+        } else {
+            var best = Infinity;
+            for (var i=0;i<state.length;i++) {
+                if (state[i] === '') {
+                    state[i] = 'X';
+                    var val = minimax(state, depth+1, true);
+                    state[i] = '';
+                    if (val < best) best = val;
+                }
             }
+            return best;
         }
+    }
 
-        /**
-         * Resets the game state and UI. (Score variables are intentionally NOT reset here)
-         */
-        function handleRestartGame() {
-            gameActive = true;
-            currentPlayer = "X";
-            gameState = ["", "", "", "", "", "", "", "", ""];
-            setStatus(currentPlayerTurn());
-
-            // Clear all cells and remove highlighting/played class
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.innerHTML = "";
-                cell.classList.remove('bg-yellow-200', 'played');
-            });
+    function handleRestartGame() {
+        gameActive = true;
+        currentPlayer = 'X';
+        gameState = ['', '', '', '', '', '', '', '', ''];
+        for (var i=0;i<cells.length;i++) {
+            cells[i].innerText = '';
         }
-        
-        // --- Event Listeners and Initialization ---
+        setStatus("It's X's turn");
+    }
 
-        // Add event listeners to all cell elements
-        document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', function(e) {
-            // Only allow human (X) to click
-            if (currentPlayer === "X" && gameActive) {
-                handleCellClick(e);
-            }
-        }));
-        
-        // Add event listener to the restart button
-        document.querySelector('#restartButton').addEventListener('click', handleRestartGame);
-        
-        // Set initial status message when the page loads
-        window.onload = () => {
-            setStatus(currentPlayerTurn());
-            updateScoreDisplay(); // Initialize score display to 0/0
-        };
-
+    for (var i=0;i<cells.length;i++) {
+        cells[i].onclick = handleCellClick;
+    }
+    document.getElementById('restartButton').onclick = handleRestartGame;
+    setStatus("It's X's turn");
+    updateScoreDisplay();
     </script>
 </body>
 </html>
